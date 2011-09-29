@@ -6,5 +6,9 @@ class Dropbox
     def width
       1
     end
+
+    def height
+      1
+    end
   end
 end
