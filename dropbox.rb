@@ -1,4 +1,11 @@
-class Dropbox < Struct.new(:files)
+class Dropbox
+
+  attr_reader :files
+
+  def initialize(files)
+    @files       = files
+    @orientation = Array.new files.size
+  end
 
   def area
     area_permutations.inject(nil) do |smallest, area_permutation|
@@ -9,23 +16,22 @@ class Dropbox < Struct.new(:files)
 private
 
   def width
-    files.inject(0) do |width, file|
-      width + file[:width]
+    files.each_with_index.inject(0) do |width, (file, index)|
+      file_width = @orientation[index] == :rotated ?
+                      file.height :
+                      file.width
+
+      width + file_width
     end
   end
 
   def height
-    files.inject(0) do |height, file|
-      height > file[:height] ? height : file[:height]
-    end
-  end
+    files.each_with_index.inject(0) do |height, (file, index)|
+      file_height = @orientation[index] == :rotated ?
+                      file.width :
+                      file.height
 
-  def rotate_file(index)
-    files[index].tap do |file|
-      new_width = file[:height]
-
-      file[:height] = file[:width]
-      file[:width]  = new_width
+      height > file_height ? height : file_height
     end
   end
 
@@ -36,17 +42,16 @@ private
   end
 
   def each_permutation
-    original_files = files.dup
-
     (0...2 ** files.size).map do |permute|
-      permute.to_s(2).split(//).each_with_index do |rotate, index|
-        rotate_file index if rotate == '1'
-      end
+      permute.
+        to_s(2).
+        rjust(files.size, '0').
+        split(//).
+        each_with_index do |rotate, index|
+          @orientation[index] = rotate == '1' ? :rotated : nil
+        end
 
-      value = yield
-      files = original_files
-
-      value
+      yield
     end
   end
 
