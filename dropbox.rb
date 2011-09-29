@@ -15,24 +15,34 @@ class Dropbox
 
 private
 
-  def width
-    files.each_with_index.inject(0) do |width, (file, index)|
-      file_width = @orientation[index] == :rotated ?
-                      file.height :
-                      file.width
-
-      width + file_width
-    end
-  end
-
   def height
-    files.each_with_index.inject(0) do |height, (file, index)|
-      file_height = @orientation[index] == :rotated ?
-                      file.width :
-                      file.height
+    files.inject(0) do |height, file|
+      file_height = height_for file
 
       height > file_height ? height : file_height
     end
+  end
+
+  def height_for(file)
+    index = files.index file
+
+    @orientation[index] == :rotated ?
+      files[index].width :
+      files[index].height
+  end
+
+  def width
+    files.inject(0) do |width, file|
+      width + width_for(file)
+    end
+  end
+
+  def width_for(file)
+    index = files.index file
+
+    @orientation[index] == :rotated ?
+      files[index].height :
+      files[index].width
   end
 
   def area_permutations
