@@ -1,4 +1,5 @@
 require File.expand_path('../../dropbox', __FILE__)
+require File.expand_path('../../file', __FILE__)
 
 describe Dropbox do
   it 'calculates the area of a single file' do
@@ -24,6 +25,12 @@ describe Dropbox do
   it 'rotates files to fit more efficiently' do
     files = [ stub(height: 2, width: 2),
               stub(height: 1, width: 3) ]
+
+    Dropbox.new(files).area.should eql(9)
+  end
+
+  it 'integrates with Dropbox::File' do
+    files = [ Dropbox::File.new(height: 3, width: 3) ]
 
     Dropbox.new(files).area.should eql(9)
   end
