@@ -2,9 +2,15 @@ require 'minitest/autorun'
 require 'minitest/spec'
 
 def pack(files)
-  files.inject(0) do |area, file|
-    area + file[:height] * file[:width]
+  width = files.inject(0) do |total_width, file|
+    total_width + file[:width]
   end
+
+  height = files.inject(0) do |max_height, file|
+    max_height > file[:height] ? max_height : file[:height]
+  end
+
+  width * height
 end
 
 describe 'pack' do
@@ -19,5 +25,12 @@ describe 'pack' do
              { :height => 3, :width => 3 }]
 
     pack(files).must_equal 18
+  end
+
+  it 'calculates the area of two unequal square files' do
+    files = [{ :height => 3, :width => 3 },
+             { :height => 4, :width => 4 }]
+
+    pack(files).must_equal 28
   end
 end
