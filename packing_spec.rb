@@ -3,7 +3,7 @@ require 'minitest/spec'
 
 def pack(files)
   files.inject(0) do |area, file|
-    area += file[:height] * file[:width]
+    area + file[:height] * file[:width]
   end
 end
 
