@@ -4,21 +4,8 @@ require 'minitest/spec'
 class Dropbox < Struct.new(:files)
 
   def area
-    original_files = files.dup
-
-    permutations = (0...2 ** files.size).map do |permute|
-      permute.to_s(2).split(//).each_with_index do |rotate, index|
-        rotate_file index if rotate == '1'
-      end
-
-      area  = width * height
-      files = original_files
-
-      area
-    end
-
-    permutations.inject(nil) do |smallest, permute|
-      smallest && smallest < permute ? smallest : permute
+    area_permutations.inject(nil) do |smallest, area_permutation|
+      smallest && smallest < area_permutation ? smallest : area_permutation
     end
   end
 
@@ -42,6 +29,27 @@ private
 
       file[:height] = file[:width]
       file[:width]  = new_width
+    end
+  end
+
+  def area_permutations
+    each_permutation do
+      width * height
+    end
+  end
+
+  def each_permutation
+    original_files = files.dup
+
+    (0...2 ** files.size).map do |permute|
+      permute.to_s(2).split(//).each_with_index do |rotate, index|
+        rotate_file index if rotate == '1'
+      end
+
+      value = yield
+      files = original_files
+
+      value
     end
   end
 
