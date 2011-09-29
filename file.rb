@@ -1,14 +1,11 @@
 class Dropbox
   class File
+
+    attr_accessor :width, :height
+
     def initialize(dimensions)
-    end
-
-    def width
-      1
-    end
-
-    def height
-      1
+      @width  = dimensions[:width]
+      @height = dimensions[:height]
     end
   end
 end
