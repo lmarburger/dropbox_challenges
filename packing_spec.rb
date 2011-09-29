@@ -2,18 +2,27 @@ require 'minitest/autorun'
 require 'minitest/spec'
 
 class Dropbox < Struct.new(:files)
+
   def area
-    width = files.inject(0) do |total_width, file|
-      total_width + file[:width]
-    end
-
-    height = files.inject(0) do |max_height, file|
-      max_height > file[:height] ? max_height : file[:height]
-    end
-
     width * height
   end
+
+private
+
+  def width
+    files.inject(0) do |width, file|
+      width + file[:width]
+    end
+  end
+
+  def height
+    files.inject(0) do |height, file|
+      height > file[:height] ? height : file[:height]
+    end
+  end
+
 end
+
 
 describe Dropbox do
   it 'calculates the area of a single file' do
